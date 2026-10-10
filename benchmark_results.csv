@@ -1,0 +1,3 @@
+﻿algorithm,iterations,public_key_bytes,ciphertext_bytes,secret_bytes,keygen_mean_ms,keygen_median_ms,encapsulation_mean_ms,encapsulation_median_ms,decapsulation_mean_ms,decapsulation_median_ms
+ML-KEM-768,500,1184,1088,32,0.15213,0.1371,0.040947,0.0369,0.061539,0.055
+ML-KEM-1024,500,1568,1568,32,0.206709,0.1891,0.054187,0.0498,0.080471,0.0732
