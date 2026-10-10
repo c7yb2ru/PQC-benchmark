@@ -2,7 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("포폴용 개발작\\pqc-benchmark-lab\\benchmark_results.csv")
+df = pd.read_csv("pqc-benchmark-lab\\benchmark_results.csv")
 
 operations = {
     "keygen_mean_ms": "Key Generation",
