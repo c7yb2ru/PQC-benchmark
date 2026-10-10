@@ -14,3 +14,14 @@ ML-DSA
 실험 및 분석
 
 반복 실행, 평균·중앙값 계산, 크기 비교 그래프, 결과 CSV 저장.
+
+---
+# Experimental Environment
+
+Python 3.14.5
+
+cryptography 48.0.0
+
+OS: Microsoft Windows 11 Pro
+
+CPU: AMD Ryzen 5 5600X 6-Core Processor
