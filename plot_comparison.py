@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 # 1. CSV 파일 읽기
 # ==========================================
 
-KEM_CSV = r"E:\\python_code\\포폴용 개발작\\pqc-benchmark-lab\\benchmark_results.csv"
-DSA_CSV = r"E:\\python_code\\포폴용 개발작\\pqc-benchmark-lab\\mldsa_benchmark_results.csv"
+KEM_CSV = r"benchmark_results.csv"
+DSA_CSV = r"mldsa_benchmark_results.csv"
 
 OUTPUT_DIR = "graphs"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
