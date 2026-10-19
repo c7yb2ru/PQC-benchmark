@@ -1,42 +1,222 @@
+
 # PQC-benchmark
 
-양자내성암호 알고리즘의 실행 시간, 키 및 암호문 크기, 서명 크기를 측정하고 실험 조건에 따른 성능 차이를 분석하는 프로젝트.
-Python 기반 ML-KEM 및 ML-DSA 벤치마크를 통해 키 생성·캡슐화·디캡슐화·전자서명·검증 성능과 키 및 데이터 크기를 비교 분석.
----
-ML-KEM
+Python 기반으로 양자내성암호(Post-Quantum Cryptography, PQC) 알고리즘인 **ML-KEM과 ML-DSA의 실행 시간 및 데이터 크기를 측정하고 비교하는 프로젝트**입니다.
 
-공유 비밀값을 안전하게 설정하기 위한 키 캡슐화 메커니즘. 키 생성, 캡슐화, 디캡슐화 시간을 측정한다.
+키 생성, 캡슐화, 디캡슐화, 전자서명, 서명 검증 연산을 반복 측정하고, 평균·중앙값 및 공개키·암호문·서명 크기를 분석합니다. 측정 결과는 CSV 파일로 저장하고 그래프로 시각화합니다.
 
-ML-DSA
+## 목차
 
-메시지의 출처와 무결성을 검증하기 위한 전자서명 알고리즘. 키 생성, 서명, 검증 시간을 측정한다.
+- [프로젝트 목적](#프로젝트-목적)
+- [사용 기술](#사용-기술)
+- [실험 대상](#실험-대상)
+- [실험 환경](#실험-환경)
+- [설치 및 실행 방법](#설치-및-실행-방법)
+- [실험 결과](#실험-결과)
+- [프로젝트 구조](#프로젝트-구조)
+- [실험의 한계](#실험의-한계)
 
-실험 및 분석
+## 프로젝트 목적
 
-반복 실행, 평균·중앙값 계산, 크기 비교 그래프, 결과 CSV 저장.
+양자내성암호 표준 알고리즘의 주요 연산을 직접 실행하고, 매개변수 집합에 따른 성능과 데이터 크기의 차이를 실험적으로 비교하는 것을 목표로 합니다.
 
----
-# Experimental Environment
+주요 분석 항목은 다음과 같습니다.
 
-Python 3.14.5
+- 연산별 평균 실행 시간 및 중앙값
+- 공개키, 암호문 및 전자서명 크기
+- ML-KEM 매개변수 집합에 따른 키 설정 성능 차이
+- ML-DSA 매개변수 집합에 따른 서명 및 검증 성능 차이
+- 실행 환경과 구현에 따른 벤치마크 결과 해석
 
-cryptography 48.0.0
+## 사용 기술
 
-OS: Microsoft Windows 11 Pro
+- **Language:** Python
+- **Cryptographic library:** `cryptography`
+- **Data analysis:** pandas
+- **Visualization:** Matplotlib
+- **Data format:** CSV
 
-CPU: AMD Ryzen 5 5600X 6-Core Processor
+## 실험 대상
 
----
+### ML-KEM
 
-## 결론
+ML-KEM(Module-Lattice-Based Key-Encapsulation Mechanism)은 통신 당사자 간 공유 비밀값을 설정하기 위한 키 캡슐화 메커니즘입니다.
 
-본 프로젝트에서는 Python과 `cryptography` 라이브러리를 활용하여 양자내성암호 알고리즘인 ML-KEM과 ML-DSA의 성능을 측정하고 비교하는 벤치마크를 수행하였다. ML-KEM은 키 생성, 캡슐화, 디캡슐화 연산을 대상으로 하였으며, ML-DSA는 키 생성, 전자서명 생성, 서명 검증 연산을 대상으로 하였다. 또한 공개키, 암호문 및 전자서명의 크기를 측정하여 연산 성능뿐만 아니라 데이터 전송과 저장 측면의 특성도 함께 분석할 수 있도록 하였다.
+측정 항목:
 
-ML-KEM-768과 ML-KEM-1024의 측정 결과, 본 실험 환경에서는 ML-KEM-768이 키 생성, 캡슐화, 디캡슐화의 모든 항목에서 더 짧은 평균 실행 시간을 보였다. ML-KEM-1024의 평균 실행 시간은 ML-KEM-768에 비해 키 생성에서 약 35.9%, 캡슐화에서 약 32.3%, 디캡슐화에서 약 30.8% 증가하였다. 데이터 크기 측면에서도 ML-KEM-1024의 공개키는 1,568바이트, 암호문은 1,568바이트로, ML-KEM-768의 공개키 1,184바이트와 암호문 1,088바이트보다 컸다. 반면 두 알고리즘이 생성한 공유 비밀값의 크기는 모두 32바이트로 동일하였다.
+- Key Generation
+- Encapsulation
+- Decapsulation
+- Public Key Size
+- Ciphertext Size
+- Shared Secret Size
 
-이러한 결과는 본 실험 환경에서 ML-KEM-768이 ML-KEM-1024보다 연산 시간과 공개키·암호문 크기 측면에서 상대적으로 작은 비용을 보였음을 나타낸다. 다만 이 결과만으로 두 알고리즘의 보안성을 직접 비교하거나 모든 환경에서 동일한 성능 차이가 발생한다고 일반화할 수는 없다. 알고리즘 선택 시에는 요구되는 보안 수준, 통신 환경, 저장 공간 및 실제 시스템의 처리 요구사항을 함께 고려해야 한다.
+현재 실험에서는 ML-KEM-768과 ML-KEM-1024를 비교합니다.
 
-ML-DSA 벤치마크는 키 생성, 서명 및 검증의 실행 시간을 각각 측정하고 공개키와 서명 크기를 비교하도록 구성하였다. 이를 통해 전자서명 알고리즘을 실제 시스템에 적용할 때 고려해야 할 연산 비용과 데이터 크기를 분석할 수 있다. ML-KEM과 ML-DSA는 각각 공유 비밀값 설정과 전자서명이라는 서로 다른 기능을 제공하므로, 두 알고리즘의 성능을 단순히 하나의 순위로 비교하기보다는 각 기능에 필요한 연산과 자원 사용량을 중심으로 평가하는 것이 적절하다.
+### ML-DSA
 
-본 프로젝트는 양자내성암호의 핵심 연산을 직접 실행하고, 반복 측정 결과를 CSV로 저장하며, 측정 데이터를 시각화하여 알고리즘별 특성을 비교하는 실험 환경을 구축했다는 의의가 있다. 향후에는 다양한 하드웨어 및 라이브러리 환경에서의 반복 실험, 측정값의 분산 분석, 메모리 사용량 및 실제 통신 환경에서의 오버헤드 측정을 추가함으로써 결과의 재현성과 실용성을 높일 수 있다.
+ML-DSA(Module-Lattice-Based Digital Signature Algorithm)는 메시지의 출처 인증과 무결성 확인을 위한 전자서명 알고리즘입니다.
 
+측정 항목:
+
+- Key Generation
+- Signing
+- Verification
+- Public Key Size
+- Signature Size
+
+실험 코드는 ML-DSA-44, ML-DSA-65, ML-DSA-87을 대상으로 합니다.
+
+## 실험 환경
+
+| 항목 | 환경 |
+|---|---|
+| Operating System | Microsoft Windows 11 Pro |
+| CPU | AMD Ryzen 5 5600X 6-Core Processor |
+| Python | 3.14.5 |
+| cryptography | 48.0.0 |
+| Data analysis | pandas |
+| Visualization | Matplotlib |
+
+실행 시간은 위 환경에서 측정한 결과이며, 다른 하드웨어·운영체제·라이브러리 버전에서는 결과가 달라질 수 있습니다.
+
+## 설치 및 실행 방법
+
+### 1. 저장소 복제
+
+```bash
+git clone https://github.com/c7yb2ru/PQC-benchmark.git
+cd PQC-benchmark
+```
+
+### 2. 가상환경 생성
+
+Python 3.14.5 환경을 기준으로 작성했습니다.
+
+Windows PowerShell:
+
+```powershell
+py -3.14 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+가상환경 활성화가 제한되는 경우에는 PowerShell 실행 정책을 무리하게 변경하기 전에 다음 명령으로 가상환경의 Python을 직접 사용할 수 있습니다.
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+```
+
+### 3. 의존성 설치
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+### 4. ML-KEM 벤치마크 실행
+
+```powershell
+python test_mlkem.py
+```
+
+실행 결과는 `benchmark_results.csv`에 저장됩니다.
+
+### 5. ML-DSA 벤치마크 실행
+
+```powershell
+python test_mldsa.py
+```
+
+실행 결과는 `mldsa_benchmark_results.csv`에 저장됩니다.
+
+### 6. 비교 그래프 생성
+
+두 벤치마크 CSV 파일이 생성된 후 다음 명령을 실행합니다.
+
+```powershell
+python plot_comparison.py
+```
+
+생성되는 그래프:
+
+- `01_key_generation.png`
+- `02_mlkem_operations.png`
+- `03_mldsa_operations.png`
+- `04_public_key_size.png`
+- `05_ciphertext_signature_size.png`
+
+그래프 파일은 저장소 루트 디렉터리에 저장됩니다.
+
+## 실험 결과
+
+### 1. 키 생성 시간
+
+![ML-KEM and ML-DSA Key Generation](01_key_generation.png)
+
+### 2. ML-KEM 캡슐화 및 디캡슐화
+
+![ML-KEM Encapsulation and Decapsulation](02_mlkem_operations.png)
+
+### 3. ML-DSA 서명 및 검증
+
+![ML-DSA Signing and Verification](03_mldsa_operations.png)
+
+### 4. 공개키 크기 비교
+
+![Public Key Size Comparison](04_public_key_size.png)
+
+### 5. ML-KEM 암호문 및 ML-DSA 서명 크기
+
+![Ciphertext and Signature Size Comparison](05_ciphertext_signature_size.png)
+
+### ML-KEM 측정 결과
+
+| 항목 | ML-KEM-768 | ML-KEM-1024 |
+|---|---:|---:|
+| 공개키 | 1,184 bytes | 1,568 bytes |
+| 암호문 | 1,088 bytes | 1,568 bytes |
+| 공유 비밀값 | 32 bytes | 32 bytes |
+| 키 생성 평균 | 0.152130 ms | 0.206709 ms |
+| 캡슐화 평균 | 0.040947 ms | 0.054187 ms |
+| 디캡슐화 평균 | 0.061539 ms | 0.080471 ms |
+
+위 실행 시간은 본 프로젝트의 측정 환경에서 얻은 평균값입니다.
+
+ML-KEM-1024는 ML-KEM-768보다 키 생성 평균 시간이 약 35.9%, 캡슐화가 약 32.3%, 디캡슐화가 약 30.8% 길게 측정되었습니다. 또한 ML-KEM-1024는 공개키와 암호문 크기가 더 컸습니다.
+
+이 결과는 해당 환경에서 관측된 성능 차이이며, 모든 구현 및 하드웨어 환경에서 동일한 차이가 발생한다고 의미하지는 않습니다.
+
+ML-DSA의 상세 측정값은 `mldsa_benchmark_results.csv`에서 확인할 수 있습니다.
+
+## 프로젝트 구조
+
+```text
+PQC-benchmark/
+├── test_mlkem.py
+├── test_mldsa.py
+├── plot_comparison.py
+├── benchmark_results.csv
+├── mldsa_benchmark_results.csv
+├── 01_key_generation.png
+├── 02_mlkem_operations.png
+├── 03_mldsa_operations.png
+├── 04_public_key_size.png
+├── 05_ciphertext_signature_size.png
+├── requirements.txt
+└── README.md
+```
+
+## 실험의 한계
+
+- 측정 결과는 특정 하드웨어, Python 및 암호화 라이브러리 환경에 종속됩니다.
+- 실행 시간과 데이터 크기만으로 알고리즘의 암호학적 안전성을 증명할 수 없습니다.
+- ML-KEM과 ML-DSA는 서로 다른 기능을 제공하므로 연산 시간을 단순 비교해 우열을 판단할 수 없습니다.
+- 실제 통신 시스템의 성능을 평가하려면 네트워크 지연, 데이터 전송량, 메모리 사용량 및 프로토콜 오버헤드 등을 추가로 측정해야 합니다.
+- 현재 환경에서 지원되는 API를 기준으로 ML-KEM-768과 ML-KEM-1024를 측정하며, ML-KEM-512는 이번 실험에 포함하지 않았습니다.
+
+## 향후 개선 방향
+
+- 다양한 하드웨어 환경에서 반복 측정
+- 실행 시간의 표준편차 및 변동성 분석
+- 메모리 사용량과 통신 오버헤드 측정
+- 실험 결과의 재현성 향상
+- 실제 통신 환경을 고려한 양자내성암호 적용성 분석
